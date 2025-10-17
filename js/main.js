@@ -48,7 +48,7 @@ var upgrades = {
     Name: "MultiplyByLog",
     BaseCost: 5000,
     OwnedAmount: 0,
-    Effect: (Math.log10(cash + 1)),
+    Effect()  { return Math.log10(cash + 1)},
     CostScaling: { Type: "add", amount: 10, multScaling: 15 }
   }
   
@@ -59,10 +59,11 @@ function update(timestamp) {
   let now = Date.now();
   let diff = (now - lastUpdate) / 1000; //diff = seconds
   lastUpdate = now;
-  cash += cashPerSec * diff * 1;
+  cash += calcCashPerSec() * diff * 1;
   
   if (timestamp - lastTimestamp > 50){
     updateText();
+    calcCashPerSec();
     lastTimestamp = timestamp;
   }
   if (timestamp - lastTimestamp2 > 1000){
@@ -77,7 +78,7 @@ function update(timestamp) {
 function updateText() {
   document.getElementById("currencyText").textContent = "Money: " + formatNumber(cash)
   
-  document.getElementById("cashRateText").textContent = "Money per Sec: " + formatNumber(cashPerSec);
+  document.getElementById("cashRateText").textContent = "Money per Sec: " + formatNumber(calcCashPerSec());
   
   document.getElementById("button1").textContent = upgrades.IncreaseBase.Name + "\ncost: " + formatNumber(calcCost("IncreaseBase")) + "\nOwned: " + upgrades.IncreaseBase.OwnedAmount;
   
@@ -85,7 +86,7 @@ function updateText() {
   
   document.getElementById("button3").textContent = upgrades.MultiplyBase2.Name + "\n cost: " + formatNumber(calcCost("MultiplyBase2")) +  "\n Owned: " + upgrades.MultiplyBase2.OwnedAmount;
 
-  document.getElementById("button4").textContent = upgrades.MultiplyByLog.Name + "\n cost: " + formatNumber(calcCost("MultiplyByLog")) +  "\n Owned: " + upgrades.MultiplyByLog.OwnedAmount;
+  document.getElementById("button4").textContent = upgrades.MultiplyByLog.Name + "\n cost: " + formatNumber(calcCost("MultiplyByLog")) +  "\n Owned: " + upgrades.MultiplyByLog.OwnedAmount + "\n Effect: " + formatNumber(upgrades.MultiplyByLog.Effect())
 }
 
 // current formula baseCost(CostScaling.Amount + owned(multScaling))^owned
@@ -113,8 +114,8 @@ function calcCashPerSec() {
   let cashPerSecBase = 1 + upgrades.IncreaseBase.OwnedAmount;
   cashPerSecBase *= upgrades.MultiplyBase.Effect ** upgrades.MultiplyBase.OwnedAmount;
   cashPerSecBase *= upgrades.MultiplyBase2.Effect ** upgrades.MultiplyBase2.OwnedAmount
-  cashPerSecBase *= upgrades.MultiplyByLog.Effect ** upgrades.MultiplyByLog.OwnedAmount
-  cashPerSec = cashPerSecBase
+  cashPerSecBase *= (upgrades.MultiplyByLog.Effect())** upgrades.MultiplyByLog.OwnedAmount
+  return cashPerSecBase;
 }
 function buyMax(){
   for (let upgrade in upgrades){
