@@ -12,29 +12,62 @@
     padding: 20px;
     border-radius: 100px;
     background-color: black;
-		color: white
+    color: white;
+    border: 2px solid #4CAF50;
+    white-space: pre-line;
+  }
+  .buttonContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    gap: 20px;
+  }
+  #buyMaxButton{
+    position: absolute;
+    align-self: baseline;;
+    bottom: 0;
+    right: 0;
+    margin: 20px;
+    visibility: hidden;
   }
   #currencyText {
     padding-top: 10px;
     text-align: center;
-  	text-shadow: 1px 1px;
+        text-shadow: 1px 1px;
     font-size: 25px;
   }
+  #cashRateText {
+    padding-top: 10px;
+    text-align: center;
+    text-shadow: 1px 1px;
+    font-size: 25px;
+  }
+  
+  
 </style>
   
   
   
 </head>
 <body id="htmlbody">
-	
+  
 <p id="currencyText"> currency </p>
 <p id="cashRateText" > currency </p>
 
+
   
-  
-<button onclick="buyUpgrade('IncreaseBase')" id="button1" class="button">click button</button>
-<button onclick="buyUpgrade('MultiplyBase')" id="button2" class="button">click button</button>	
+<div class="buttonContainer">
+  <button onclick="buyUpgrade('IncreaseBase')" id="button1" class="button">click button</button>
+  <button onclick="buyUpgrade('MultiplyBase')" id="button2" class="button">click button</button>
+  <button onclick="buyUpgrade('MultiplyBase2')" id="button3" class="button">click button</button>
+  <button onclick="buyUpgrade('MultiplyByLog')" id="button4" class="button">click button</button>
+</div>
+
+
+<button class="button" id="buyMaxButton" onclick="buyMax()""> Buy Max Upgrades</button>
 <script src="js/main.js"></script>
+<script src="js/format.js"></script>
 </body>
 </html>
 
