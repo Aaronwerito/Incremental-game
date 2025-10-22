@@ -15,11 +15,11 @@
 //Main.js file things below
 //
 //
-var cash = 0;
+var cash =  10000;
 var cashPerSec = 1;
 var lastUpdate = Date.now();
-var lastTimestamp = 0;
-var lastTimestamp2 = 0;
+var lastTimestamp50 = 0;
+var lastTimestamp1000 = 0;
 
 
 var upgrades = {
@@ -49,7 +49,7 @@ var upgrades = {
     BaseCost: 5000,
     OwnedAmount: 0,
     Effect()  { return Math.log10(cash + 1)},
-    CostScaling: { Type: "add", amount: 10, multScaling: 15 }
+    CostScaling: { Type: "multi", amount: 2, multScaling: 1.75}
   }
   
   
@@ -61,15 +61,16 @@ function update(timestamp) {
   lastUpdate = now;
   cash += calcCashPerSec() * diff * 1;
   
-  if (timestamp - lastTimestamp > 50){
+  if (timestamp - lastTimestamp50 > 50){
     updateText();
     calcCashPerSec();
-    lastTimestamp = timestamp;
+    lastTimestamp50 = timestamp;
   }
-  if (timestamp - lastTimestamp2 > 1000){
+  if (timestamp - lastTimestamp1000 > 500){
     checkMilestones();
     //autoBuy();
-    lastTimestamp2 = timestamp;
+    lastTimestamp1000 = timestamp;
+    prestige.calcPoints();
   }
 
   requestAnimationFrame(update);
@@ -99,6 +100,14 @@ function calcCost(upgrade) {
     let multScaling = upgrades[upgrade].CostScaling.multScaling;
     let ownedUpg = upgrades[upgrade].OwnedAmount;
     let thisCost = baseCost * (multiplier + multScaling * ownedUpg) ** ownedUpg;
+    return thisCost;
+  }
+  if (upgrades[upgrade].CostScaling.Type === "multi"){
+    let baseCost = upgrades[upgrade].BaseCost;
+    let startingE = upgrades[upgrade].CostScaling.amount;
+    let multScaling = upgrades[upgrade].CostScaling.multScaling;
+    let ownedUpg = upgrades[upgrade].OwnedAmount;
+    let thisCost = baseCost * (startingE ** (multScaling ** ownedUpg))
     return thisCost;
   }
 }
@@ -135,7 +144,7 @@ update();
 //
 //
 //Format.js file things below
-//
+// 
 //
 const SUFFIXES = ["", "k", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc", "Ud", "Dd", "Td"]
 function formatNumber(number){
@@ -178,7 +187,7 @@ function checkMilestones(){
         establishMilestones();
       }
     }
-
+  
     
   }
 }
