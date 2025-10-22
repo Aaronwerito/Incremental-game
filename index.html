@@ -1,75 +1,72 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<title>Incremental testing game</title>
-<style>
-  body {
-    background-color: #788282; 
-    
-    
-  }
-  .button {
-    padding: 20px;
-    border-radius: 100px;
-    background-color: black;
-    color: white;
-    border: 2px solid #4CAF50;
-    white-space: pre-line;
-  }
-  .buttonContainer{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100px;
-    gap: 20px;
-  }
-  #buyMaxButton{
-    position: absolute;
-    align-self: baseline;;
-    bottom: 0;
-    right: 0;
-    margin: 20px;
-    visibility: hidden;
-  }
-  #currencyText {
-    padding-top: 10px;
-    text-align: center;
-        text-shadow: 1px 1px;
-    font-size: 25px;
-  }
-  #cashRateText {
-    padding-top: 10px;
-    text-align: center;
-    text-shadow: 1px 1px;
-    font-size: 25px;
-  }
-  
-  
-</style>
-  
-  
-  
+  <title>Incremental testing game</title>
+  <link rel="stylesheet" type="text/css" href="/style.css">
+
+
+
 </head>
+
 <body id="htmlbody">
-  
-<p id="currencyText"> currency </p>
-<p id="cashRateText" > currency </p>
+
+  <div class="container">
+    <div id="currencyContainer">
+      <p id="currencyText"> currency </p>
+      <p id="cashRateText"> currency </p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="tabContainer">
+      <button class="tabButton active" data-tab="tab1">Upgrades</button>
+      <button class="tabButton" data-tab="tab2">Prestige</button>
+      <button class="tabButton" data-tab="tab3">Tab 3</button>
+    </div>
+    <div class="tabContent" id="tabContent">
+
+        <!-- Tab 1 Content -->
+      <div id="tab1" class="tab-panel active">
+        <h2 class="tabText">Text info about tab1</h2>
+        <p>Upgrade Tab Content</p>
+        <div>
+          <div class="buttonContainer">
+            <button onclick="buyUpgrade('IncreaseBase')" id="button1" class="button">click button</button>
+            <button onclick="buyUpgrade('MultiplyBase')" id="button2" class="button">click button</button>
+            <button onclick="buyUpgrade('MultiplyBase2')" id="button3" class="button">click button</button>
+            <button onclick="buyUpgrade('MultiplyByLog')" id="button4" class="button">click button</button>
+          </div>
+        </div>
+      </div>
+
+       <!-- Tab 2 Content -->
+        <div id="tab2" class="tab-panel">
+          <h2 class="tabText">Text info about tab2</h2>
+          <p>Prestige Tab Content</p>
+          <button class="button" id="testButton" onclick="alert('test')">pTab test buton</button>
+        </div>
+
+        <!-- Tab 3 Content -->
+        <div id="tab3" class="tab-panel">
+          <h2 class="tabText">Text info about tab3</h2>
+          <p>Tab 3 Content</p>
+        </div>
+
+      </div>
+    </div>
 
 
-  
-<div class="buttonContainer">
-  <button onclick="buyUpgrade('IncreaseBase')" id="button1" class="button">click button</button>
-  <button onclick="buyUpgrade('MultiplyBase')" id="button2" class="button">click button</button>
-  <button onclick="buyUpgrade('MultiplyBase2')" id="button3" class="button">click button</button>
-  <button onclick="buyUpgrade('MultiplyByLog')" id="button4" class="button">click button</button>
-</div>
 
 
-<button class="button" id="buyMaxButton" onclick="buyMax()""> Buy Max Upgrades</button>
-<script src="js/main.js"></script>
-<script src="js/format.js"></script>
+
+
+
+    <button class="button" id="testButton" onclick="prestige.calcPoints()"> test Button </button>
+    <button class="button" id="buyMaxButton" onclick="buyMax()"> Buy Max Upgrades</button>
+    <script src="js/tabs.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/prestige.js"></script>
 </body>
+
 </html>
-
-
-  
