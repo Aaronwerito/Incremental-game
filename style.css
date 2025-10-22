@@ -1,0 +1,85 @@
+body {
+  background-color: #788282; 
+
+
+}
+#currencyText {
+  padding-top: 10px;
+  text-align: center;
+      text-shadow: 1px 1px;
+  font-size: 25px;
+}
+#cashRateText {
+  padding-top: 10px;
+  text-align: center;
+  text-shadow: 1px 1px;
+  font-size: 25px;
+}
+#buttonTest {
+  position: absolute;
+  align-self: baseline;
+  bottom: 0;
+  right: 50%;
+  margin: 20px;
+}
+#tabContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+  gap: 20px;
+}
+.tabContent{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50%;
+  gap: 20px;
+  background-color:white;
+}
+.tabButton{
+  padding: 15px;
+  border-radius: 5px;
+  background-color: black;
+  color: white;
+  border: 2px solid #4f850d;
+  
+}
+
+.tab-panel.active{
+  display: block;
+  background-color: gray;
+  border-radius: 25px;
+  padding-bottom: 10px;
+  width: 75vw;
+}
+.tab-panel{
+  display: none;
+}
+.tabText {
+  text-align: center;
+  font-size: 15px;
+}
+.buttonContainer{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: green;
+  flex-wrap: wrap;
+}
+.button {
+  padding: 20px;
+  border-radius: 100px;
+  background-color: black;
+  color: white;
+  border: 2px solid #4CAF50;
+  white-space: pre-line;
+}
+#buyMaxButton{
+  position: absolute;
+  align-self: baseline;;
+  bottom: 0;
+  right: 0;
+  margin: 20px;
+  visibility: hidden;
+}
