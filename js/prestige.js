@@ -1,44 +1,55 @@
 const prestige = {
-  points: 0,
   prestigeReq: 1e36,
 
   calcPoints(){
-    let cashE = Math.log10(cash) / 2;
-    let pPoints = Math.pow((Math.log(cash) / Math.log(25)), cashE);
-    pPoints = Math.floor(pPoints / 1e25);
-    document.getElementById("testButton").textContent = "Prestige Points: " + pPoints
+    let pPoints = Math.pow((player.cash / 1e36), 0.25);
+    pPoints *= player.prestige.upgrades.MultiplypPoints.Effect ** player.prestige.upgrades.MultiplypPoints.OwnedAmount
+    pPoints = Math.floor(pPoints)
+    return pPoints;
   },
-  
+
+  //https://www.desmos.com/calculator/fqjcypban3
   prestige(){
-    if (cash >= prestige.prestigeReq){
-      prestige.points += prestige.calcPoints();
+    if (player.cash >= prestige.prestigeReq){
+      player.prestige.points += prestige.calcPoints()
+      player.cash = 100;
+      player.cashPerSec = 1;
       //prestige.prestigeReq *= 1e10; //placeholder
-      cash = 100; 
-      for (let upgrade in upgrades){
-        upgrades[upgrade].OwnedAmount = 0;
+      for (let upgrade in player.upgrades){
+        player.upgrades[upgrade].OwnedAmount = 0;
       }
+      player.cash = 100;
+    } else {
+      alert("You need 1e36 (1Ud) cash to prestige")
     }
   },
-  
-  upgrades: {
-    MultiplyCash: {
-      Name: "MultiplyCash",
-      BaseCost: 3,
-      OwnedAmount: 0,
-      Effect: 1.1,
-      CostScaling: { Type: "add", amount: 1.5, multScaling: 0.1 }
-    }
-  },
-  
+
   calcCost(upgrade){
-    if (prestige.upgrades[upgrade].CostScaling.Type === "add") {
-      let baseCost = prestige.upgrades[upgrade].BaseCost;
-      let multiplier = prestige.upgrades[upgrade].CostScaling.amount;
-      let multScaling = prestige.upgrades[upgrade].CostScaling.multScaling;
-      let ownedUpg = prestige.upgrades[upgrade].OwnedAmount;
-      let thisCost = baseCost * (multiplier + multScaling * ownedUpg) ** ownedUpg;
+    if (player.prestige.upgrades[upgrade].CostScaling.Type === "add") {
+      let baseCost = player.prestige.upgrades[upgrade].BaseCost;
+      let multiplier = player.prestige.upgrades[upgrade].CostScaling.amount;
+      let multScaling = player.prestige.upgrades[upgrade].CostScaling.multScaling;
+      let ownedUpg = player.prestige.upgrades[upgrade].OwnedAmount;
+      let push = player.prestige.upgrades[upgrade].CostScaling.push
+      
+      let thisCost = baseCost * (multiplier + multScaling * (ownedUpg + push)) ** (ownedUpg + push);
+      return thisCost;
+    }
+    if (player.prestige.upgrades[upgrade].CostScaling.Type === "multi"){
+      let baseCost = player.prestige.upgrades[upgrade].BaseCost;
+      let startingE = player.prestige.upgrades[upgrade].CostScaling.amount;
+      let multScaling = player.prestige.upgrades[upgrade].CostScaling.multScaling;
+      let ownedUpg = player.prestige.upgrades[upgrade].OwnedAmount;
+      let push = player.prestige.upgrades[upgrade].CostScaling.push
+      
+      let thisCost = baseCost * (startingE ** (multScaling ** (ownedUpg + push)))
       return thisCost;
     }
   },
-  
+  buyUpgrade(upgrade){
+    if (player.prestige.points >= prestige.calcCost(upgrade)){
+      player.prestige.points -= prestige.calcCost(upgrade);
+      player.prestige.upgrades[upgrade].OwnedAmount += 1;
+    }
+  }
 }
