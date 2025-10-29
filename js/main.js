@@ -15,61 +15,27 @@
 //Main.js file things below
 //
 //
-var cash =  10000;
-var cashPerSec = 1;
 var lastUpdate = Date.now();
 var lastTimestamp50 = 0;
-var lastTimestamp1000 = 0;
+var lastTimestamp500 = 0;
 
 
-var upgrades = {
-  IncreaseBase: {
-    Name: "IncreaseBase",
-    BaseCost: 10,
-    OwnedAmount: 0,
-    Effect: 1,
-    CostScaling: { Type: "add", amount: 1.5, multScaling: 0.1 },
-  },
-  MultiplyBase: {
-    Name: "MultiplyBase",
-    BaseCost: 100,
-    OwnedAmount: 0,
-    Effect: 2,
-    CostScaling: { Type: "add", amount: 2, multScaling: 2 },
-  },
-  MultiplyBase2: {
-    Name: "MultiplyBase2",
-    BaseCost: 500,
-    OwnedAmount: 0,
-    Effect: 5,
-    CostScaling: { Type: "add", amount: 5, multScaling: 5 },
-  },
-  MultiplyByLog: {
-    Name: "MultiplyByLog",
-    BaseCost: 5000,
-    OwnedAmount: 0,
-    Effect()  { return Math.log10(cash + 1)},
-    CostScaling: { Type: "multi", amount: 2, multScaling: 1.75}
-  }
-  
-  
-};
 
+//TODO fix cuurency text to be a function
 function update(timestamp) {
   let now = Date.now();
   let diff = (now - lastUpdate) / 1000; //diff = seconds
   lastUpdate = now;
-  cash += calcCashPerSec() * diff * 1;
-  
+  player.cash += player.cashPerSec * diff * 1;
   if (timestamp - lastTimestamp50 > 50){
     updateText();
-    calcCashPerSec();
+    player.cashPerSec = calcCashPerSec();
     lastTimestamp50 = timestamp;
   }
-  if (timestamp - lastTimestamp1000 > 500){
-    checkMilestones();
+  if (timestamp - lastTimestamp500 > 500){
     //autoBuy();
-    lastTimestamp1000 = timestamp;
+    checkMilestones();
+    lastTimestamp500 = timestamp;
     prestige.calcPoints();
   }
 
@@ -77,67 +43,79 @@ function update(timestamp) {
 }
 
 function updateText() {
-  document.getElementById("currencyText").textContent = "Money: " + formatNumber(cash)
-  
+  document.getElementById("currencyText").textContent = "Money: " + formatNumber(player.cash)
+
   document.getElementById("cashRateText").textContent = "Money per Sec: " + formatNumber(calcCashPerSec());
   
-  document.getElementById("button1").textContent = upgrades.IncreaseBase.Name + "\ncost: " + formatNumber(calcCost("IncreaseBase")) + "\nOwned: " + upgrades.IncreaseBase.OwnedAmount;
+  document.getElementById("button1").textContent = player.upgrades.IncreaseBase.Name + "\ncost: " + formatNumber(calcCost("IncreaseBase")) + "\nOwned: " + player.upgrades.IncreaseBase.OwnedAmount;
   
-  document.getElementById("button2").textContent = upgrades.MultiplyBase.Name + "\n cost: " + formatNumber(calcCost("MultiplyBase")) +  "\n Owned: " + upgrades.MultiplyBase.OwnedAmount;
+  document.getElementById("button2").textContent = player.upgrades.MultiplyBase.Name + "\n cost: " + formatNumber(calcCost("MultiplyBase")) +  "\n Owned: " + player.upgrades.MultiplyBase.OwnedAmount;
   
-  document.getElementById("button3").textContent = upgrades.MultiplyBase2.Name + "\n cost: " + formatNumber(calcCost("MultiplyBase2")) +  "\n Owned: " + upgrades.MultiplyBase2.OwnedAmount;
+  document.getElementById("button3").textContent = player.upgrades.MultiplyBase2.Name + "\n cost: " + formatNumber(calcCost("MultiplyBase2")) +  "\n Owned: " + player.upgrades.MultiplyBase2.OwnedAmount;
 
-  document.getElementById("button4").textContent = upgrades.MultiplyByLog.Name + "\n cost: " + formatNumber(calcCost("MultiplyByLog")) +  "\n Owned: " + upgrades.MultiplyByLog.OwnedAmount + "\n Effect: " + formatNumber(upgrades.MultiplyByLog.Effect())
+  document.getElementById("button4").textContent = player.upgrades.MultiplyByLog.Name + "\n cost: " + formatNumber(calcCost("MultiplyByLog")) +  "\n Owned: " + player.upgrades.MultiplyByLog.OwnedAmount + "\n Effect: " + formatNumber(player.upgrades.MultiplyByLog.Effect())
+
+document.getElementById("prestigeButton").textContent = "Prestige for: " + formatNumber(prestige.calcPoints())
+
+  document.getElementById("pPointsText").textContent = formatNumber(player.prestige.points)
+
+  document.getElementById("pButton1").textContent = player.prestige.upgrades.MultiplyCash.Name + "\n cost: " + formatNumber(prestige.calcCost("MultiplyCash")) +  "\n Owned: " + player.prestige.upgrades.MultiplyCash.OwnedAmount;
+  
+  document.getElementById("pButton2").textContent = player.prestige.upgrades.MultiplypPoints.Name + "\n cost: " + formatNumber(prestige.calcCost("MultiplypPoints")) +  "\n Owned: " + player.prestige.upgrades.MultiplypPoints.OwnedAmount;
+
+  document.getElementById("pButton3").textContent = player.prestige.upgrades.IncreaseMBEffect.Name + "\n cost: " + formatNumber(prestige.calcCost("IncreaseMBEffect")) +  "\n Owned: " + player.prestige.upgrades.IncreaseMBEffect.OwnedAmount
 }
 
 // current formula baseCost(CostScaling.Amount + owned(multScaling))^owned
 //https://www.desmos.com/calculator/9ofpmfj9wo
 
 function calcCost(upgrade) {
-  if (upgrades[upgrade].CostScaling.Type === "add") {
-    let baseCost = upgrades[upgrade].BaseCost;
-    let multiplier = upgrades[upgrade].CostScaling.amount;
-    let multScaling = upgrades[upgrade].CostScaling.multScaling;
-    let ownedUpg = upgrades[upgrade].OwnedAmount;
+  if (player.upgrades[upgrade].CostScaling.Type === "add") {
+    let baseCost = player.upgrades[upgrade].BaseCost;
+    let multiplier = player.upgrades[upgrade].CostScaling.amount;
+    let multScaling = player.upgrades[upgrade].CostScaling.multScaling;
+    let ownedUpg = player.upgrades[upgrade].OwnedAmount;
     let thisCost = baseCost * (multiplier + multScaling * ownedUpg) ** ownedUpg;
     return thisCost;
   }
-  if (upgrades[upgrade].CostScaling.Type === "multi"){
-    let baseCost = upgrades[upgrade].BaseCost;
-    let startingE = upgrades[upgrade].CostScaling.amount;
-    let multScaling = upgrades[upgrade].CostScaling.multScaling;
-    let ownedUpg = upgrades[upgrade].OwnedAmount;
+  if (player.upgrades[upgrade].CostScaling.Type === "multi"){
+    let baseCost = player.upgrades[upgrade].BaseCost;
+    let startingE = player.upgrades[upgrade].CostScaling.amount;
+    let multScaling = player.upgrades[upgrade].CostScaling.multScaling;
+    let ownedUpg = player.upgrades[upgrade].OwnedAmount;
     let thisCost = baseCost * (startingE ** (multScaling ** ownedUpg))
     return thisCost;
   }
 }
 
 function buyUpgrade(upgrade) {
-  if (cash >= calcCost(upgrade)) {
-    cash -= calcCost(upgrade);
-    upgrades[upgrade].OwnedAmount += 1;
+  if (player.cash >= calcCost(upgrade)) {
+    player.cash -= calcCost(upgrade);
+    player.upgrades[upgrade].OwnedAmount += 1;
     calcCashPerSec();
   }
 }
 function calcCashPerSec() {
-  let cashPerSecBase = 1 + upgrades.IncreaseBase.OwnedAmount;
-  cashPerSecBase *= upgrades.MultiplyBase.Effect ** upgrades.MultiplyBase.OwnedAmount;
-  cashPerSecBase *= upgrades.MultiplyBase2.Effect ** upgrades.MultiplyBase2.OwnedAmount
-  cashPerSecBase *= (upgrades.MultiplyByLog.Effect())** upgrades.MultiplyByLog.OwnedAmount
+  updateEffects();
+  let cashPerSecBase = 1 + player.upgrades.IncreaseBase.OwnedAmount;
+  cashPerSecBase *= player.upgrades.MultiplyBase.Effect ** player.upgrades.MultiplyBase.OwnedAmount;
+  cashPerSecBase *= player.upgrades.MultiplyBase2.Effect ** player.upgrades.MultiplyBase2.OwnedAmount
+  cashPerSecBase *= (player.upgrades.MultiplyByLog.Effect())** player.upgrades.MultiplyByLog.OwnedAmount
+  cashPerSecBase *= player.prestige.upgrades.MultiplyCash.Effect ** player.prestige.upgrades.MultiplyCash.OwnedAmount
   return cashPerSecBase;
 }
 function buyMax(){
-  for (let upgrade in upgrades){
-    while (cash >= calcCost(upgrade)){
+  for (let upgrade in player.upgrades){
+    while (player.cash >= calcCost(upgrade)){
       buyUpgrade(upgrade)
     }
   }
 }
-function autoBuy(){
-  if (milestones.unlock1.Unlocked === true){
-    buyMax();
-  }
+function updateEffects(){
+  player.upgrades.MultiplyBase.Effect = 2 + player.prestige.upgrades.IncreaseMBEffect.Effect * player.prestige.upgrades.IncreaseMBEffect.OwnedAmount
 }
+
+
 update();
 
 
@@ -159,43 +137,6 @@ function formatNumber(number){
   }
   if (number >= 1e45){
     return number.toExponential(3)
-  }
-}
-
-
-
-//
-//
-//Unlockables.js file things below
-//These unlock after a certain milestone is reached
-//
-
-const milestones ={
-  unlock1: {
-    Name: "Buy Max",
-    Milestone: {type: "money", req: 1e20},
-    Unlocked: false,
-    id: "buyMaxButton",
-  }
-}
-
-function checkMilestones(){
-  for (let milestone in milestones){
-    if (milestones[milestone].Milestone.type === "money"){
-      if (cash >= milestones[milestone].Milestone.req){
-        milestones[milestone].Unlocked = true;
-        establishMilestones();
-      }
-    }
-  
-    
-  }
-}
-
-function establishMilestones(){
-  for (let milestone in milestones){
-    if (milestones[milestone].Unlocked === true){
-      document.getElementById("buyMaxButton").style.visibility = "visible";
-    }
-  }
+  } 
+  alert(number + " is not a number")
 }
