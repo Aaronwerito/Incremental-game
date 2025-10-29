@@ -3,7 +3,7 @@
 
 <head>
   <title>Incremental testing game</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" type="text/css" href="/style.css?v=1.0.0">
 
 
 
@@ -24,6 +24,7 @@
       <button class="tabButton" data-tab="tab2">Prestige</button>
       <button class="tabButton" data-tab="tab3">Tab 3</button>
     </div>
+    <button class="prestigeButton" id="prestigeButton" onclick="prestige.prestige()">Prestige for: </button>
     <div class="tabContent" id="tabContent">
 
         <!-- Tab 1 Content -->
@@ -40,13 +41,27 @@
         </div>
       </div>
 
+
+
+
+      
        <!-- Tab 2 Content -->
         <div id="tab2" class="tab-panel">
           <h2 class="tabText">Text info about tab2</h2>
-          <p>Prestige Tab Content</p>
-          <button class="button" id="testButton" onclick="alert('test')">pTab test buton</button>
+          <div class="tab-insideText"> <p>Prestige Points: </p>  <p id="pPointsText"></p>                </div>
+          
+          <div class="buttonContainer">
+            <button onclick="prestige.buyUpgrade('MultiplyCash')" id="pButton1" class="button">click button</button>
+            <button onclick="prestige.buyUpgrade('MultiplypPoints')" id="pButton2" class="button">click button</button>
+            <button onclick="prestige.buyUpgrade('IncreaseMBEffect')" id="pButton3" class="button">click button</button>
+          </div>
         </div>
 
+
+
+
+
+      
         <!-- Tab 3 Content -->
         <div id="tab3" class="tab-panel">
           <h2 class="tabText">Text info about tab3</h2>
@@ -62,11 +77,12 @@
 
 
 
-    <button class="button" id="testButton" onclick="prestige.calcPoints()"> test Button </button>
     <button class="button" id="buyMaxButton" onclick="buyMax()"> Buy Max Upgrades</button>
-    <script src="js/tabs.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/prestige.js"></script>
+         <script src="js/player.js?v=1.0.0"></script>
+           <script src="js/tabs.js?v=1.0.0"></script>
+       <script src="js/prestige.js?v=1.0.0"></script>
+    <script src="js/unlockables.js?v=1.0.0"></script>
+           <script src="js/main.js?v=1.0.0"></script>
 </body>
 
 </html>
